@@ -17,7 +17,7 @@ type Client struct {
 func New(secretKey string) *Client {
 	return &Client{
 		secretKey: secretKey,
-		baseURL:   "https://api.paystack.co",
+		baseURL:   "https://api.paystack.com",
 		client:    &http.Client{Timeout: 10 * time.Second},
 	}
 }
@@ -45,7 +45,7 @@ func (c *Client) do(method, path string, body, result interface{}) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 400 {
-		return fmt.Errorf("paystack error: %s", resp.Status)
+		return fmt.Errorf("paystack error: status %d", resp.StatusCode)
 	}
 	if result != nil {
 		return json.NewDecoder(resp.Body).Decode(result)
@@ -53,7 +53,21 @@ func (c *Client) do(method, path string, body, result interface{}) error {
 	return nil
 }
 
-// CreateSubscription creates a Paystack subscription
+func (c *Client) VerifyTransaction(reference string) (*VerifyResponse, error) {
+	var resp struct {
+		Status  bool            `json:"status"`
+		Message string          `json:"message"`
+		Data    VerifyResponse  `json:"data"`
+	}
+	if err := c.do("GET", "/transaction/verify/"+reference, nil, &resp); err != nil {
+		return nil, err
+	}
+	if !resp.Status {
+		return nil, fmt.Errorf("paystack: %s", resp.Message)
+	}
+	return &resp.Data, nil
+}
+
 func (c *Client) CreateSubscription(customerEmail, planCode, authorization string) (*SubscriptionResponse, error) {
 	payload := map[string]string{
 		"customer":      customerEmail,
@@ -74,7 +88,6 @@ func (c *Client) CreateSubscription(customerEmail, planCode, authorization strin
 	return &resp.Data, nil
 }
 
-// DisableSubscription cancels a subscription on Paystack
 func (c *Client) DisableSubscription(subscriptionCode, token string) error {
 	payload := map[string]string{
 		"code":  subscriptionCode,
@@ -91,6 +104,24 @@ func (c *Client) DisableSubscription(subscriptionCode, token string) error {
 		return fmt.Errorf("paystack: %s", resp.Message)
 	}
 	return nil
+}
+
+type VerifyResponse struct {
+	Status        string `json:"status"`
+	Reference     string `json:"reference"`
+	Amount        int    `json:"amount"`
+	Authorization struct {
+		AuthorizationCode string `json:"authorization_code"`
+		Bin               string `json:"bin"`
+		Last4             string `json:"last4"`
+		Channel           string `json:"channel"`
+		CardType          string `json:"card_type"`
+		Bank              string `json:"bank"`
+		CountryCode       string `json:"country_code"`
+	} `json:"authorization"`
+	Customer struct {
+		Email string `json:"email"`
+	} `json:"customer"`
 }
 
 type SubscriptionResponse struct {
