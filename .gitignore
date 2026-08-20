@@ -1,2 +1,4 @@
 .env
-.env
+ai-service/venv/
+__pycache__/
+*.pyc
