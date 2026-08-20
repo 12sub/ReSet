@@ -3,6 +3,7 @@ package cache
 import (
 	"context"
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -13,10 +14,21 @@ type RedisCache struct {
 }
 
 func NewRedis(addr string) *RedisCache {
-	rdb := redis.NewClient(&redis.Options{
-		Addr: addr,
-		DB:   0,
-	})
+	var opt *redis.Options
+
+	// Upstash/Render provide full URLs like rediss://default:pass@host:6379
+	if strings.HasPrefix(addr, "redis://") || strings.HasPrefix(addr, "rediss://") {
+		parsed, err := redis.ParseURL(addr)
+		if err == nil {
+			opt = parsed
+		} else {
+			opt = &redis.Options{Addr: addr, DB: 0}
+		}
+	} else {
+		opt = &redis.Options{Addr: addr, DB: 0}
+	}
+
+	rdb := redis.NewClient(opt)
 	return &RedisCache{client: rdb}
 }
 
