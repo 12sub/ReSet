@@ -1,11 +1,10 @@
-# [Project Title]
+# Project ReSet
 
 ## Team Members
 - Olasubomi Williams
 - TOriola Joshua Oluwatunmise
 - Imoleoluwa Emmanuella
-- [Name 4]
-- [Name 5]
+
 
 ---
 
