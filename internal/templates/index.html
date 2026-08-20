@@ -1,4 +1,4 @@
-{{define "content"}}
+{{define "index_content"}}
 <div class="card" id="subscription-card">
     <h2>Start Subscription</h2>
     
@@ -70,7 +70,10 @@ function payWithPaystack() {
 }
 
 document.getElementById('plan-code').addEventListener('change', function(e) {
-    const amounts = { 'PLN_vcalvltypw7p0sz': 5000, 'PLN_test_yyy': 1000000 };
+    const amounts = { 
+        'PLN_test_xxx': 500000,      // ₦5,000 in kobo
+        'PLN_test_yyy': 1000000      // ₦10,000 in kobo
+    };
     document.getElementById('amount').value = amounts[e.target.value] || 500000;
 });
 </script>

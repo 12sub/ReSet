@@ -1,0 +1,85 @@
+{{define "tracked_content"}}
+<div class="card">
+    <h2>Tracked Subscriptions</h2>
+    <p style="color: var(--text-secondary); margin-bottom: 1.25rem; font-size: 0.95rem;">
+        Manage subscriptions detected from your transaction history.
+    </p>
+
+    {{if not .Subs}}
+    <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <p>No tracked subscriptions found.</p>
+        <a href="/detect" class="btn btn-primary btn-sm" style="margin-top: 1rem; display: inline-flex;">
+            Detect a Subscription
+        </a>
+    </div>
+    {{else}}
+    <div class="sub-grid">
+        {{range .Subs}}
+        <div class="sub-card" id="sub-{{.ID}}">
+            <div class="sub-header">
+                <div>
+                    <div class="sub-title">{{.Merchant}}</div>
+                    <div class="sub-meta">
+                        <span class="badge badge-info">{{.Category}}</span>
+                        {{if eq .Status "active"}}
+                        <span class="badge badge-success">Active</span>
+                        {{else}}
+                        <span class="badge badge-danger">Canceled</span>
+                        {{end}}
+                        <span class="badge badge-neutral">{{.MatchType}}</span>
+                    </div>
+                </div>
+                <div class="sub-amount">₦{{.Amount}}</div>
+            </div>
+
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem; font-family: monospace; background: var(--bg); padding: 0.5rem 0.75rem; border-radius: 6px;">
+                {{.RawText}}
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                    {{.CreatedAt.Format "Jan 02, 2006"}}
+                </div>
+                {{if eq .Status "active"}}
+                <button class="btn btn-danger btn-sm"
+                        hx-post="/subscriptions/tracked/cancel"
+                        hx-vals='{"id": "{{.ID}}"}'
+                        hx-target="#sub-{{.ID}}"
+                        hx-swap="outerHTML"
+                        hx-confirm="Cancel {{.Merchant}} subscription?"
+                        hx-indicator=".spinner-{{.ID}}">
+                    Cancel
+                    <span class="htmx-indicator spinner spinner-dark spinner-{{.ID}}" style="width: 1rem; height: 1rem; border-width: 2px;"></span>
+                </button>
+                {{else}}
+                <span class="badge badge-danger">Cancelled {{.CanceledAt.Format "Jan 02, 15:04"}}</span>
+                {{end}}
+            </div>
+        </div>
+        {{end}}
+    </div>
+    {{end}}
+</div>
+{{end}}
+
+{{define "tracked_cancelled"}}
+<div class="sub-card" id="sub-{{.ID}}">
+    <div class="sub-header">
+        <div>
+            <div class="sub-title">{{.Merchant}}</div>
+            <div class="sub-meta">
+                <span class="badge badge-info">{{.Category}}</span>
+                <span class="badge badge-danger">Canceled</span>
+            </div>
+        </div>
+        <div class="sub-amount">₦{{.Amount}}</div>
+    </div>
+
+    <div class="alert alert-success" style="margin-top: 0.75rem; margin-bottom: 0;">
+        Successfully cancelled on {{.Canceled}}.
+    </div>
+</div>
+{{end}}

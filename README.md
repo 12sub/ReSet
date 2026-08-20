@@ -2,7 +2,7 @@
 
 ## Team Members
 - Olasubomi Williams
-- Tumishe 
+- TOriola Joshua Oluwatunmise
 - Imoleoluwa Emmanuella
 - [Name 4]
 - [Name 5]
@@ -28,8 +28,6 @@
 
 *Our solution is to provide a way out of this trap - Meet ReSet - A automated Subscription cancellation software that gives users the option to directly opt-out of any unnecessary and unwanted subscription services.*
 
-**Example:**
-"Our project, 'TaskMaster,' is a clean and simple to-do list application. It allows users to add tasks, mark them as complete, and sort them by priority. The goal is to provide a straightforward tool to help users stay organized."
 
 ---
 
@@ -38,10 +36,10 @@
 *List the major technologies, frameworks, and platforms you used to build your project.*
 
 *   **Frontend:** HTMX
-*   **Backend:** (e.g., Node.js with Serverless Functions on Vercel)
+*   **Backend:** GOlang for the Backend, Python for the AI/ML
 *   **Database:** PostgreSQL for Long Term Storage and Redis for in-memory caching 
-*   **Deployment:** Render
-*   **AI/APIs:** KIMI.AI
+*   **Deployment:** Render 
+*   **AI/APIs:** KIMI.AI for Research, Paystack API for subscription and cancellation,
 
 ---
 

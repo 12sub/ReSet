@@ -6,6 +6,8 @@ type Config struct {
 	Port              string
 	DatabaseURL       string
 	PaystackSecretKey string
+	RedisAddr         string
+	PythonURL         string
 }
 
 func Load() *Config {
@@ -13,6 +15,8 @@ func Load() *Config {
 		Port:              getEnv("PORT", "8080"),
 		DatabaseURL:       getEnv("DATABASE_URL", "postgres://reset:resetpass@localhost:5432/reset?sslmode=disable"),
 		PaystackSecretKey: getEnv("PAYSTACK_SECRET_KEY", ""),
+		RedisAddr:         getEnv("REDIS_ADDR", "localhost:6379"),
+		PythonURL:         getEnv("PYTHON_URL", "http://localhost:8001"),
 	}
 }
 

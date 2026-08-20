@@ -1,0 +1,96 @@
+{{define "detect_content"}}
+<div class="card">
+    <h2>Detect Subscription</h2>
+    <p style="color: var(--text-secondary); margin-bottom: 1.25rem; font-size: 0.95rem;">
+        Paste a transaction description from your bank statement. Our AI will identify the merchant, category, and subscription details.
+    </p>
+
+    <form hx-post="/subscriptions/detect" 
+          hx-target="#detect-result" 
+          hx-swap="innerHTML"
+          hx-indicator="#detect-spinner">
+        <div class="field">
+            <label for="detect-email">Email</label>
+            <input type="email" id="detect-email" name="email" value="demo@reset.ng" required>
+        </div>
+
+        <div class="field">
+            <label for="detect-text">Transaction Text</label>
+            <textarea id="detect-text" name="text" placeholder="e.g. NETFLIX.COM 8000.00 NGN Monthly subscription" required></textarea>
+            <div class="field-hint">Example: "Debit: NGN 4,900.00 - SPOTIFY PREMIUM"</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Analyze Transaction
+            <span id="detect-spinner" class="htmx-indicator spinner"></span>
+        </button>
+    </form>
+</div>
+
+<div id="detect-result" style="margin-top: 1.5rem;"></div>
+{{end}}
+
+{{define "detect_result"}}
+{{if .Error}}
+<div class="card">
+    <h2>Detection Failed</h2>
+    <div class="alert alert-error">{{.Error}}</div>
+    <button class="btn btn-secondary" onclick="document.getElementById('detect-text').focus()" style="margin-top: 0.75rem;">
+        Try Another Text
+    </button>
+</div>
+{{else}}
+<div class="card">
+    <h2>Subscription Detected</h2>
+
+    <div class="detail">
+        <span>Merchant</span>
+        <span class="value" style="font-weight: 700;">{{.Merchant}}</span>
+    </div>
+    <div class="detail">
+        <span>Category</span>
+        <span class="badge badge-info">{{.Category}}</span>
+    </div>
+    <div class="detail">
+        <span>Amount</span>
+        <span class="value">₦{{.Amount}}</span>
+    </div>
+    <div class="detail">
+        <span>Status</span>
+        <span class="badge badge-success">{{.Status}}</span>
+    </div>
+    <div class="detail">
+        <span>Match Type</span>
+        <span class="badge badge-neutral">{{.MatchType}}</span>
+    </div>
+    <div class="detail" style="display: block;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span>Confidence</span>
+            <span class="value" style="font-weight: 700;">{{.Confidence}}%</span>
+        </div>
+        <div class="confidence-bar">
+            <div class="confidence-fill {{if lt .Confidence 50}}low{{else if lt .Confidence 80}}medium{{end}}" 
+                 style="width: {{.Confidence}}%"></div>
+        </div>
+    </div>
+    <div class="detail">
+        <span>Raw Text</span>
+    </div>
+    <div style="background: var(--bg); padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; font-family: monospace; color: var(--text-secondary); margin-bottom: 1rem;">
+        {{.RawText}}
+    </div>
+    <div class="detail">
+        <span>Tracked ID</span>
+        <span class="value">{{.ID}}</span>
+    </div>
+
+    <div class="alert alert-success">
+        This subscription has been saved to your tracked list. You can cancel it anytime from the <a href="/tracked" style="color: inherit; text-decoration: underline;">Tracked</a> page.
+    </div>
+
+    <button class="btn btn-secondary" onclick="document.getElementById('detect-text').value=''; document.getElementById('detect-text').focus();" style="margin-top: 0.75rem;">
+        Analyze Another
+    </button>
+</div>
+{{end}}
+{{end}}

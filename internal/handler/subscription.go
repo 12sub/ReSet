@@ -2,13 +2,14 @@ package handler
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/google/uuid"
 	"github.com/12sub/Reset/internal/domain"
 	"github.com/12sub/Reset/internal/service"
 	"github.com/12sub/Reset/internal/templates"
+	"github.com/google/uuid"
 )
 
 type SubscriptionHandler struct {
@@ -21,7 +22,10 @@ func NewSubscriptionHandler(sub *service.SubscriptionService, cancel *service.Ca
 }
 
 func (h *SubscriptionHandler) Index(w http.ResponseWriter, r *http.Request) {
-	templates.T.ExecuteTemplate(w, "layout", nil)
+    data := map[string]string{"Page": "index"}
+    if err := templates.T.ExecuteTemplate(w, "layout", data); err != nil {
+        log.Printf("template error: %v", err)
+    }
 }
 
 func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {

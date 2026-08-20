@@ -3,10 +3,11 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
+
 	"github.com/12sub/Reset/internal/domain"
 	"github.com/12sub/Reset/internal/paystack"
 	"github.com/12sub/Reset/internal/repository"
+	"github.com/google/uuid"
 )
 
 type CancellationService struct {
@@ -19,7 +20,6 @@ func NewCancellationService(repo *repository.SubscriptionRepo, pc *paystack.Clie
 }
 
 func (s *CancellationService) Cancel(ctx context.Context, subID uuid.UUID, reason string) error {
-	// 1. Get local subscription
 	sub, err := s.repo.GetByID(ctx, subID)
 	if err != nil {
 		return err
@@ -30,25 +30,18 @@ func (s *CancellationService) Cancel(ctx context.Context, subID uuid.UUID, reaso
 	if sub.Status == domain.StatusCanceled {
 		return fmt.Errorf("already canceled")
 	}
+	if sub.PaystackEmailToken == "" {
+		return fmt.Errorf("email token missing — cannot cancel")
+	}
 
-	// 2. Disable on Paystack (need to fetch email_token - store it in DB in production)
-	// For hackathon: Paystack requires the subscription code + email_token
-	// You should store email_token when creating. For now, we'll assume you have it.
-	// If you didn't store it, you'd need to fetch from Paystack's list endpoint.
-	
-	// NOTE: In your Create flow, also store the email_token from Paystack response
-	// Here we'll use a placeholder - fix this in your actual implementation
-	emailToken := "fetch-this-from-paystack-or-store-on-create"
-	
-	if err := s.paystack.DisableSubscription(sub.PaystackSubID, emailToken); err != nil {
+	// Use the REAL email token from the database
+	if err := s.paystack.DisableSubscription(sub.PaystackSubID, sub.PaystackEmailToken); err != nil {
 		return fmt.Errorf("paystack disable failed: %w", err)
 	}
 
-	// 3. Update local DB
 	if err := s.repo.UpdateStatus(ctx, subID, domain.StatusCanceled); err != nil {
 		return err
 	}
 
-	// TODO: Log cancellation reason to analytics table
 	return nil
 }
