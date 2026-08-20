@@ -333,6 +333,7 @@
                 <li><a href="/" class="{{if eq .Page "index"}}active{{end}}">Subscribe</a></li>
                 <li><a href="/detect" class="{{if eq .Page "detect"}}active{{end}}">Detect</a></li>
                 <li><a href="/tracked" class="{{if eq .Page "tracked"}}active{{end}}">Tracked</a></li>
+                <li><a href="/test" class="{{if eq .Page "test"}}active{{end}}">Test</a></li>
                 <li><a href="/health">Health</a></li>
             </ul>
         </div>
@@ -344,6 +345,7 @@
         {{if eq .Page "index"}}{{template "index_content" .}}{{end}}
         {{if eq .Page "detect"}}{{template "detect_content" .}}{{end}}
         {{if eq .Page "tracked"}}{{template "tracked_content" .}}{{end}}
+        {{if eq .Page "test"}}{{template "test_content" .}}{{end}}
     </div>
 
     <footer>ReSet Engine · Automated subscription management</footer>

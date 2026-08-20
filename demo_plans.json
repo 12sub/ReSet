@@ -1,0 +1,391 @@
+{
+  "plans": [
+    {
+      "merchant": "Netflix",
+      "category": "Streaming",
+      "plan_code": "PLN_netflix_basic",
+      "amount_kobo": 450000,
+      "amount_display": "\u20a64,500",
+      "interval": "monthly",
+      "description": "Netflix Basic - 1 screen, SD quality"
+    },
+    {
+      "merchant": "Netflix",
+      "category": "Streaming",
+      "plan_code": "PLN_netflix_standard",
+      "amount_kobo": 700000,
+      "amount_display": "\u20a67,000",
+      "interval": "monthly",
+      "description": "Netflix Standard - 2 screens, HD quality"
+    },
+    {
+      "merchant": "Spotify",
+      "category": "Streaming",
+      "plan_code": "PLN_spotify_individual",
+      "amount_kobo": 150000,
+      "amount_display": "\u20a61,500",
+      "interval": "monthly",
+      "description": "Spotify Premium Individual"
+    },
+    {
+      "merchant": "Spotify",
+      "category": "Streaming",
+      "plan_code": "PLN_spotify_family",
+      "amount_kobo": 250000,
+      "amount_display": "\u20a62,500",
+      "interval": "monthly",
+      "description": "Spotify Premium Family - up to 6 accounts"
+    },
+    {
+      "merchant": "Amazon Prime",
+      "category": "Streaming",
+      "plan_code": "PLN_prime_monthly",
+      "amount_kobo": 230000,
+      "amount_display": "\u20a62,300",
+      "interval": "monthly",
+      "description": "Amazon Prime Video + Delivery"
+    },
+    {
+      "merchant": "Disney+",
+      "category": "Streaming",
+      "plan_code": "PLN_disney_plus",
+      "amount_kobo": 320000,
+      "amount_display": "\u20a63,200",
+      "interval": "monthly",
+      "description": "Disney+ Standard - 4K UHD"
+    },
+    {
+      "merchant": "YouTube Premium",
+      "category": "Streaming",
+      "plan_code": "PLN_yt_premium",
+      "amount_kobo": 180000,
+      "amount_display": "\u20a61,800",
+      "interval": "monthly",
+      "description": "YouTube Premium - ad-free + Music"
+    },
+    {
+      "merchant": "Showmax",
+      "category": "Streaming",
+      "plan_code": "PLN_showmax_pro",
+      "amount_kobo": 120000,
+      "amount_display": "\u20a61,200",
+      "interval": "monthly",
+      "description": "Showmax Pro - Entertainment + Sports"
+    },
+    {
+      "merchant": "iCloud",
+      "category": "Cloud Storage",
+      "plan_code": "PLN_icloud_50gb",
+      "amount_kobo": 120000,
+      "amount_display": "\u20a61,200",
+      "interval": "monthly",
+      "description": "iCloud+ 50GB storage"
+    },
+    {
+      "merchant": "iCloud",
+      "category": "Cloud Storage",
+      "plan_code": "PLN_icloud_200gb",
+      "amount_kobo": 290000,
+      "amount_display": "\u20a62,900",
+      "interval": "monthly",
+      "description": "iCloud+ 200GB storage"
+    },
+    {
+      "merchant": "Google One",
+      "category": "Cloud Storage",
+      "plan_code": "PLN_gone_100gb",
+      "amount_kobo": 130000,
+      "amount_display": "\u20a61,300",
+      "interval": "monthly",
+      "description": "Google One 100GB"
+    },
+    {
+      "merchant": "Microsoft 365",
+      "category": "Productivity",
+      "plan_code": "PLN_ms365_personal",
+      "amount_kobo": 450000,
+      "amount_display": "\u20a64,500",
+      "interval": "monthly",
+      "description": "Microsoft 365 Personal - 1 user"
+    },
+    {
+      "merchant": "Notion",
+      "category": "Productivity",
+      "plan_code": "PLN_notion_plus",
+      "amount_kobo": 80000,
+      "amount_display": "\u20a6800",
+      "interval": "monthly",
+      "description": "Notion Plus - unlimited file uploads"
+    },
+    {
+      "merchant": "Canva",
+      "category": "Productivity",
+      "plan_code": "PLN_canva_pro",
+      "amount_kobo": 350000,
+      "amount_display": "\u20a63,500",
+      "interval": "monthly",
+      "description": "Canva Pro - premium templates"
+    },
+    {
+      "merchant": "Adobe Creative Cloud",
+      "category": "Productivity",
+      "plan_code": "PLN_adobe_cc",
+      "amount_kobo": 2500000,
+      "amount_display": "\u20a625,000",
+      "interval": "monthly",
+      "description": "Adobe Creative Cloud All Apps"
+    },
+    {
+      "merchant": "GitHub",
+      "category": "Developer Tools",
+      "plan_code": "PLN_github_pro",
+      "amount_kobo": 300000,
+      "amount_display": "\u20a63,000",
+      "interval": "monthly",
+      "description": "GitHub Pro - advanced code review"
+    },
+    {
+      "merchant": "ChatGPT Plus",
+      "category": "AI Tools",
+      "plan_code": "PLN_chatgpt_plus",
+      "amount_kobo": 200000,
+      "amount_display": "\u20a62,000",
+      "interval": "monthly",
+      "description": "ChatGPT Plus - GPT-4 access"
+    },
+    {
+      "merchant": "Claude",
+      "category": "AI Tools",
+      "plan_code": "PLN_claude_pro",
+      "amount_kobo": 180000,
+      "amount_display": "\u20a61,800",
+      "interval": "monthly",
+      "description": "Claude Pro - extended usage"
+    },
+    {
+      "merchant": "Netflix",
+      "category": "Streaming",
+      "paystack_plan_code": "PLN_b35xl6vymrw92l7",  
+      "internal_code": "PLN_netflix_basic",             
+      "amount_kobo": 450000,
+      "amount_display": "₦4,500",
+      "interval": "monthly"
+    },
+    {
+      "merchant": "Paramount+",
+      "category": "Streaming",
+      "paystack_plan_code": "PLN_pgyxkp9fdmiyu4l",               
+      "amount_kobo": 360000,
+      "amount_display": "₦3,600",
+      "interval": "monthly",
+      "description": "Paramount+ - ad-free streaming"
+    },
+    {
+      "merchant": "Planet Fitness",
+      "category": "Fitness",
+      "plan_code": "PLN_pf_black",
+      "amount_kobo": 150000,
+      "amount_display": "\u20a61,500",
+      "interval": "monthly",
+      "description": "Planet Fitness Black Card"
+    },
+    {
+      "merchant": "Strava",
+      "category": "Fitness",
+      "plan_code": "PLN_strava_summit",
+      "amount_kobo": 400000,
+      "amount_display": "\u20a64,000",
+      "interval": "yearly",
+      "description": "Strava Summit - annual training pack"
+    },
+    {
+      "merchant": "MTN",
+      "category": "Telecom",
+      "plan_code": "PLN_mtn_10gb",
+      "amount_kobo": 300000,
+      "amount_display": "\u20a63,000",
+      "interval": "monthly",
+      "description": "MTN 10GB monthly data plan"
+    },
+    {
+      "merchant": "Airtel",
+      "category": "Telecom",
+      "plan_code": "PLN_airtel_smart",
+      "amount_kobo": 250000,
+      "amount_display": "\u20a62,500",
+      "interval": "monthly",
+      "description": "Airtel SmartConnect Premium"
+    },
+    {
+      "merchant": "DStv",
+      "category": "Cable TV",
+      "plan_code": "PLN_dstv_compact",
+      "amount_kobo": 900000,
+      "amount_display": "\u20a69,000",
+      "interval": "monthly",
+      "description": "DStv Compact - 135+ channels"
+    },
+    {
+      "merchant": "DStv",
+      "category": "Cable TV",
+      "plan_code": "PLN_dstv_premium",
+      "amount_kobo": 2450000,
+      "amount_display": "\u20a624,500",
+      "interval": "monthly",
+      "description": "DStv Premium - 175+ channels"
+    },
+    {
+      "merchant": "GOtv",
+      "category": "Cable TV",
+      "plan_code": "PLN_gotv_jolli",
+      "amount_kobo": 330000,
+      "amount_display": "\u20a63,300",
+      "interval": "monthly",
+      "description": "GOtv Jolli - 70+ channels"
+    },
+    {
+      "merchant": "Spectranet",
+      "category": "Internet",
+      "plan_code": "PLN_spectra_unlimited",
+      "amount_kobo": 1600000,
+      "amount_display": "\u20a616,000",
+      "interval": "monthly",
+      "description": "Spectranet Unlimited Ultra"
+    },
+    {
+      "merchant": "Smile",
+      "category": "Internet",
+      "plan_code": "PLN_smile_50gb",
+      "amount_kobo": 750000,
+      "amount_display": "\u20a67,500",
+      "interval": "monthly",
+      "description": "Smile 50GB Anytime"
+    },
+    {
+      "merchant": "IrokoTV",
+      "category": "Streaming",
+      "plan_code": "PLN_iroko_vip",
+      "amount_kobo": 50000,
+      "amount_display": "\u20a6500",
+      "interval": "monthly",
+      "description": "IrokoTV VIP - Nollywood movies"
+    },
+    {
+      "merchant": "Jumia Prime",
+      "category": "Shopping",
+      "plan_code": "PLN_jumia_prime",
+      "amount_kobo": 100000,
+      "amount_display": "\u20a61,000",
+      "interval": "monthly",
+      "description": "Jumia Prime - free delivery"
+    },
+    {
+      "merchant": "Chowdeck+",
+      "category": "Food Delivery",
+      "plan_code": "PLN_chowdeck_plus",
+      "amount_kobo": 150000,
+      "amount_display": "\u20a61,500",
+      "interval": "monthly",
+      "description": "Chowdeck+ - free delivery on orders"
+    },
+    {
+      "merchant": "PiggyVest",
+      "category": "Savings/Investment",
+      "plan_code": "PLN_piggy_autosave",
+      "amount_kobo": 50000,
+      "amount_display": "\u20a6500",
+      "interval": "weekly",
+      "description": "PiggyVest AutoSave - weekly deduction"
+    },
+    {
+      "merchant": "Cowrywise",
+      "category": "Savings/Investment",
+      "plan_code": "PLN_cowry_stash",
+      "amount_kobo": 100000,
+      "amount_display": "\u20a61,000",
+      "interval": "monthly",
+      "description": "Cowrywise Stash plan"
+    },
+    {
+      "merchant": "RiseVest",
+      "category": "Savings/Investment",
+      "plan_code": "PLN_rise_dollar",
+      "amount_kobo": 500000,
+      "amount_display": "\u20a65,000",
+      "interval": "monthly",
+      "description": "RiseVest Dollar investment plan"
+    },
+    {
+      "merchant": "NYTimes",
+      "category": "News",
+      "plan_code": "PLN_nyt_basic",
+      "amount_kobo": 150000,
+      "amount_display": "\u20a61,500",
+      "interval": "monthly",
+      "description": "NYTimes Basic - unlimited articles"
+    },
+    {
+      "merchant": "Medium",
+      "category": "News",
+      "plan_code": "PLN_medium_member",
+      "amount_kobo": 250000,
+      "amount_display": "\u20a62,500",
+      "interval": "monthly",
+      "description": "Medium Membership - ad-free reading"
+    },
+    {
+      "merchant": "Deezer",
+      "category": "Streaming",
+      "plan_code": "PLN_deezer_hiFi",
+      "amount_kobo": 100000,
+      "amount_display": "\u20a61,000",
+      "interval": "monthly",
+      "description": "Deezer HiFi - FLAC quality"
+    },
+    {
+      "merchant": "Dropbox",
+      "category": "Cloud Storage",
+      "plan_code": "PLN_dropbox_plus",
+      "amount_kobo": 120000,
+      "amount_display": "\u20a61,200",
+      "interval": "monthly",
+      "description": "Dropbox Plus - 2TB storage"
+    },
+    {
+      "merchant": "Boomplay",
+      "category": "Streaming",
+      "plan_code": "PLN_boomplay_premium",
+      "amount_kobo": 30000,
+      "amount_display": "\u20a6300",
+      "interval": "monthly",
+      "description": "Boomplay Premium - offline mode"
+    },
+    {
+      "merchant": "Audiomack",
+      "category": "Streaming",
+      "plan_code": "PLN_audiomack_premium",
+      "amount_kobo": 25000,
+      "amount_display": "\u20a6250",
+      "interval": "monthly",
+      "description": "Audiomack Premium - no ads"
+    }
+  ],
+  "test_users": [
+    {
+      "email": "demo@reset.ng",
+      "name": "Demo User"
+    },
+    {
+      "email": "tunde@example.com",
+      "name": "Tunde Bakare"
+    },
+    {
+      "email": "chioma@example.com",
+      "name": "Chioma Nwosu"
+    },
+    {
+      "email": "femi@example.com",
+      "name": "Femi Adeyemi"
+    }
+  ]
+}

@@ -46,6 +46,7 @@ func main() {
 	subService := service.NewSubscriptionService(subRepo, pc)
 	cancelService := service.NewCancellationService(subRepo, pc)
 	trackedService := service.NewTrackedService(trackedRepo, pythonClient, pc)
+	bulkHandler := handler.NewBulkCancelHandler(trackedService)
 
 	h := handler.NewSubscriptionHandler(subService, cancelService)
 	wh := handler.NewWebhookHandler(subRepo, cfg.PaystackSecretKey)
@@ -68,6 +69,9 @@ func main() {
 
 	// Health
 	mux.HandleFunc("GET /health", healthHandler.Handle)
+	mux.HandleFunc("GET /test", trackedHandler.TestPage)
+	mux.HandleFunc("GET /api/tracked/active", bulkHandler.HandleListActive)
+	mux.HandleFunc("POST /api/tracked/bulk-cancel", bulkHandler.HandleBulkCancel)
 
 	log.Printf("ReSet server running on http://0.0.0.0:%s", cfg.Port)
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+cfg.Port, mux))

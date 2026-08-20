@@ -1,0 +1,460 @@
+{{define "test_content"}}
+<div id="test-dashboard">
+    <!-- Stats Bar -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div class="card" style="padding: 1.25rem; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--primary);">39</div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">Demo Plans</div>
+        </div>
+        <div class="card" style="padding: 1.25rem; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--primary);">72</div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">Test Cases</div>
+        </div>
+        <div class="card" style="padding: 1.25rem; text-align: center;">
+            <div id="stat-passed" style="font-size: 2rem; font-weight: 800; color: var(--primary);">0</div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">Passed</div>
+        </div>
+        <div class="card" style="padding: 1.25rem; text-align: center;">
+            <div id="stat-failed" style="font-size: 2rem; font-weight: 800; color: var(--danger);">0</div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">Failed</div>
+        </div>
+        <div class="card" style="padding: 1.25rem; text-align: center;">
+            <div id="stat-rate" style="font-size: 2rem; font-weight: 800; color: var(--primary);">0%</div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">Pass Rate</div>
+        </div>
+    </div>
+
+    <!-- Section 1: Demo Plans -->
+    <div class="card" style="margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+            <h2 style="margin: 0;">Demo Subscription Plans</h2>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn btn-sm btn-secondary" onclick="filterPlans('all')" style="width: auto;">All</button>
+                <button class="btn btn-sm btn-secondary" onclick="filterPlans('Streaming')" style="width: auto;">Streaming</button>
+                <button class="btn btn-sm btn-secondary" onclick="filterPlans('Productivity')" style="width: auto;">Productivity</button>
+                <button class="btn btn-sm btn-secondary" onclick="filterPlans('Telecom')" style="width: auto;">Telecom</button>
+                <button class="btn btn-sm btn-secondary" onclick="filterPlans('Internet')" style="width: auto;">Internet</button>
+                <button class="btn btn-sm btn-secondary" onclick="filterPlans('Savings/Investment')" style="width: auto;">Savings</button>
+            </div>
+        </div>
+        <div id="plans-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+            <!-- Plans injected by JS -->
+        </div>
+    </div>
+
+    <!-- Section 2: Live Playground -->
+    <div class="card" style="margin-bottom: 1.5rem;">
+        <h2 style="margin-bottom: 1rem;">Live Classification Playground</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div>
+                <div class="field">
+                    <label>Transaction Text</label>
+                    <textarea id="playground-text" rows="4" placeholder="Paste a bank transaction description here...">NETFLIX.COM 4500.00 - Monthly subscription renewal</textarea>
+                </div>
+                <button class="btn btn-primary" onclick="classifyPlayground()">
+                    Classify Now
+                    <span id="playground-spinner" class="htmx-indicator spinner"></span>
+                </button>
+                <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-secondary);">
+                    Or click any demo plan above to auto-fill
+                </div>
+            </div>
+            <div id="playground-result" style="background: var(--bg); border-radius: 12px; padding: 1.25rem; min-height: 200px;">
+                <div class="empty-state" style="padding: 2rem 1rem;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity: 0.3; margin-bottom: 0.75rem;">
+                        <path d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p>Click "Classify Now" to see AI results</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Test Suite -->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+            <h2 style="margin: 0;">Automated Test Suite</h2>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-sm btn-primary" onclick="runAllTests()" style="width: auto;">
+                    Run All Tests
+                    <span id="batch-spinner" class="htmx-indicator spinner" style="width: 1rem; height: 1rem; border-width: 2px;"></span>
+                </button>
+                <button class="btn btn-sm btn-secondary" onclick="resetTests()" style="width: auto;">Reset</button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div style="display: flex; gap: 0.25rem; margin-bottom: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0;">
+            <button class="test-tab active" onclick="switchTab('exact')" data-tab="exact">
+                Exact Matches <span class="badge badge-success" style="margin-left: 0.25rem;">35</span>
+            </button>
+            <button class="test-tab" onclick="switchTab('fuzzy')" data-tab="fuzzy">
+                Fuzzy Matches <span class="badge badge-warning" style="margin-left: 0.25rem;">27</span>
+            </button>
+            <button class="test-tab" onclick="switchTab('heuristic')" data-tab="heuristic">
+                Heuristic <span class="badge badge-neutral" style="margin-left: 0.25rem;">5</span>
+            </button>
+            <button class="test-tab" onclick="switchTab('reject')" data-tab="reject">
+                Non-Subs <span class="badge badge-danger" style="margin-left: 0.25rem;">5</span>
+            </button>
+        </div>
+
+        <div id="test-suite-container">
+            <!-- Test cases injected by JS -->
+        </div>
+
+        <div id="batch-results" style="margin-top: 1.5rem; display: none;">
+            <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Batch Results</h3>
+            <div id="batch-log" style="background: #111827; color: #e5e7eb; padding: 1rem; border-radius: 10px; font-family: monospace; font-size: 0.8rem; max-height: 300px; overflow-y: auto;"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .plan-card {
+        background: white;
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .plan-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(16,185,129,0.1);
+        transform: translateY(-2px);
+    }
+    .plan-merchant { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.25rem; }
+    .plan-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .plan-amount { font-size: 1.15rem; font-weight: 800; color: var(--primary); }
+    .plan-desc { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem; }
+    .test-tab {
+        background: none;
+        border: none;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        display: flex;
+        align-items: center;
+    }
+    .test-tab.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+    .test-tab:hover { color: var(--text); }
+    .test-case {
+        background: white;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    .test-case-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .test-case-text {
+        font-family: monospace;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        background: var(--bg);
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        flex: 1;
+        word-break: break-all;
+    }
+    .test-case-result {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border);
+        display: none;
+    }
+    .test-case-result.show { display: block; animation: slideIn 0.3s ease; }
+    .status-icon { font-size: 1.25rem; }
+    .status-pass { color: var(--primary); }
+    .status-fail { color: var(--danger); }
+    .status-pending { color: var(--text-secondary); }
+</style>
+
+<script>
+// Embedded demo data
+const DEMO_PLANS = [{"merchant": "Netflix", "category": "Streaming", "plan_code": "PLN_netflix_basic", "amount_kobo": 450000, "amount_display": "\u20a64,500", "interval": "monthly", "description": "Netflix Basic - 1 screen, SD quality"}, {"merchant": "Netflix", "category": "Streaming", "plan_code": "PLN_netflix_standard", "amount_kobo": 700000, "amount_display": "\u20a67,000", "interval": "monthly", "description": "Netflix Standard - 2 screens, HD quality"}, {"merchant": "Spotify", "category": "Streaming", "plan_code": "PLN_spotify_individual", "amount_kobo": 150000, "amount_display": "\u20a61,500", "interval": "monthly", "description": "Spotify Premium Individual"}, {"merchant": "Spotify", "category": "Streaming", "plan_code": "PLN_spotify_family", "amount_kobo": 250000, "amount_display": "\u20a62,500", "interval": "monthly", "description": "Spotify Premium Family - up to 6 accounts"}, {"merchant": "Amazon Prime", "category": "Streaming", "plan_code": "PLN_prime_monthly", "amount_kobo": 230000, "amount_display": "\u20a62,300", "interval": "monthly", "description": "Amazon Prime Video + Delivery"}, {"merchant": "Disney+", "category": "Streaming", "plan_code": "PLN_disney_plus", "amount_kobo": 320000, "amount_display": "\u20a63,200", "interval": "monthly", "description": "Disney+ Standard - 4K UHD"}, {"merchant": "YouTube Premium", "category": "Streaming", "plan_code": "PLN_yt_premium", "amount_kobo": 180000, "amount_display": "\u20a61,800", "interval": "monthly", "description": "YouTube Premium - ad-free + Music"}, {"merchant": "Showmax", "category": "Streaming", "plan_code": "PLN_showmax_pro", "amount_kobo": 120000, "amount_display": "\u20a61,200", "interval": "monthly", "description": "Showmax Pro - Entertainment + Sports"}, {"merchant": "iCloud", "category": "Cloud Storage", "plan_code": "PLN_icloud_50gb", "amount_kobo": 120000, "amount_display": "\u20a61,200", "interval": "monthly", "description": "iCloud+ 50GB storage"}, {"merchant": "iCloud", "category": "Cloud Storage", "plan_code": "PLN_icloud_200gb", "amount_kobo": 290000, "amount_display": "\u20a62,900", "interval": "monthly", "description": "iCloud+ 200GB storage"}, {"merchant": "Google One", "category": "Cloud Storage", "plan_code": "PLN_gone_100gb", "amount_kobo": 130000, "amount_display": "\u20a61,300", "interval": "monthly", "description": "Google One 100GB"}, {"merchant": "Microsoft 365", "category": "Productivity", "plan_code": "PLN_ms365_personal", "amount_kobo": 450000, "amount_display": "\u20a64,500", "interval": "monthly", "description": "Microsoft 365 Personal - 1 user"}, {"merchant": "Notion", "category": "Productivity", "plan_code": "PLN_notion_plus", "amount_kobo": 80000, "amount_display": "\u20a6800", "interval": "monthly", "description": "Notion Plus - unlimited file uploads"}, {"merchant": "Canva", "category": "Productivity", "plan_code": "PLN_canva_pro", "amount_kobo": 350000, "amount_display": "\u20a63,500", "interval": "monthly", "description": "Canva Pro - premium templates"}, {"merchant": "Adobe Creative Cloud", "category": "Productivity", "plan_code": "PLN_adobe_cc", "amount_kobo": 2500000, "amount_display": "\u20a625,000", "interval": "monthly", "description": "Adobe Creative Cloud All Apps"}, {"merchant": "GitHub", "category": "Developer Tools", "plan_code": "PLN_github_pro", "amount_kobo": 300000, "amount_display": "\u20a63,000", "interval": "monthly", "description": "GitHub Pro - advanced code review"}, {"merchant": "ChatGPT Plus", "category": "AI Tools", "plan_code": "PLN_chatgpt_plus", "amount_kobo": 200000, "amount_display": "\u20a62,000", "interval": "monthly", "description": "ChatGPT Plus - GPT-4 access"}, {"merchant": "Claude", "category": "AI Tools", "plan_code": "PLN_claude_pro", "amount_kobo": 180000, "amount_display": "\u20a61,800", "interval": "monthly", "description": "Claude Pro - extended usage"}, {"merchant": "Planet Fitness", "category": "Fitness", "plan_code": "PLN_pf_black", "amount_kobo": 150000, "amount_display": "\u20a61,500", "interval": "monthly", "description": "Planet Fitness Black Card"}, {"merchant": "Strava", "category": "Fitness", "plan_code": "PLN_strava_summit", "amount_kobo": 400000, "amount_display": "\u20a64,000", "interval": "yearly", "description": "Strava Summit - annual training pack"}, {"merchant": "MTN", "category": "Telecom", "plan_code": "PLN_mtn_10gb", "amount_kobo": 300000, "amount_display": "\u20a63,000", "interval": "monthly", "description": "MTN 10GB monthly data plan"}, {"merchant": "Airtel", "category": "Telecom", "plan_code": "PLN_airtel_smart", "amount_kobo": 250000, "amount_display": "\u20a62,500", "interval": "monthly", "description": "Airtel SmartConnect Premium"}, {"merchant": "DStv", "category": "Cable TV", "plan_code": "PLN_dstv_compact", "amount_kobo": 900000, "amount_display": "\u20a69,000", "interval": "monthly", "description": "DStv Compact - 135+ channels"}, {"merchant": "DStv", "category": "Cable TV", "plan_code": "PLN_dstv_premium", "amount_kobo": 2450000, "amount_display": "\u20a624,500", "interval": "monthly", "description": "DStv Premium - 175+ channels"}, {"merchant": "GOtv", "category": "Cable TV", "plan_code": "PLN_gotv_jolli", "amount_kobo": 330000, "amount_display": "\u20a63,300", "interval": "monthly", "description": "GOtv Jolli - 70+ channels"}, {"merchant": "Spectranet", "category": "Internet", "plan_code": "PLN_spectra_unlimited", "amount_kobo": 1600000, "amount_display": "\u20a616,000", "interval": "monthly", "description": "Spectranet Unlimited Ultra"}, {"merchant": "Smile", "category": "Internet", "plan_code": "PLN_smile_50gb", "amount_kobo": 750000, "amount_display": "\u20a67,500", "interval": "monthly", "description": "Smile 50GB Anytime"}, {"merchant": "IrokoTV", "category": "Streaming", "plan_code": "PLN_iroko_vip", "amount_kobo": 50000, "amount_display": "\u20a6500", "interval": "monthly", "description": "IrokoTV VIP - Nollywood movies"}, {"merchant": "Jumia Prime", "category": "Shopping", "plan_code": "PLN_jumia_prime", "amount_kobo": 100000, "amount_display": "\u20a61,000", "interval": "monthly", "description": "Jumia Prime - free delivery"}, {"merchant": "Chowdeck+", "category": "Food Delivery", "plan_code": "PLN_chowdeck_plus", "amount_kobo": 150000, "amount_display": "\u20a61,500", "interval": "monthly", "description": "Chowdeck+ - free delivery on orders"}, {"merchant": "PiggyVest", "category": "Savings/Investment", "plan_code": "PLN_piggy_autosave", "amount_kobo": 50000, "amount_display": "\u20a6500", "interval": "weekly", "description": "PiggyVest AutoSave - weekly deduction"}, {"merchant": "Cowrywise", "category": "Savings/Investment", "plan_code": "PLN_cowry_stash", "amount_kobo": 100000, "amount_display": "\u20a61,000", "interval": "monthly", "description": "Cowrywise Stash plan"}, {"merchant": "RiseVest", "category": "Savings/Investment", "plan_code": "PLN_rise_dollar", "amount_kobo": 500000, "amount_display": "\u20a65,000", "interval": "monthly", "description": "RiseVest Dollar investment plan"}, {"merchant": "NYTimes", "category": "News", "plan_code": "PLN_nyt_basic", "amount_kobo": 150000, "amount_display": "\u20a61,500", "interval": "monthly", "description": "NYTimes Basic - unlimited articles"}, {"merchant": "Medium", "category": "News", "plan_code": "PLN_medium_member", "amount_kobo": 250000, "amount_display": "\u20a62,500", "interval": "monthly", "description": "Medium Membership - ad-free reading"}, {"merchant": "Deezer", "category": "Streaming", "plan_code": "PLN_deezer_hiFi", "amount_kobo": 100000, "amount_display": "\u20a61,000", "interval": "monthly", "description": "Deezer HiFi - FLAC quality"}, {"merchant": "Dropbox", "category": "Cloud Storage", "plan_code": "PLN_dropbox_plus", "amount_kobo": 120000, "amount_display": "\u20a61,200", "interval": "monthly", "description": "Dropbox Plus - 2TB storage"}, {"merchant": "Boomplay", "category": "Streaming", "plan_code": "PLN_boomplay_premium", "amount_kobo": 30000, "amount_display": "\u20a6300", "interval": "monthly", "description": "Boomplay Premium - offline mode"}, {"merchant": "Audiomack", "category": "Streaming", "plan_code": "PLN_audiomack_premium", "amount_kobo": 25000, "amount_display": "\u20a6250", "interval": "monthly", "description": "Audiomack Premium - no ads"}];
+
+const TEST_CASES = {
+    exact: [{"text": "DEBIT: NGN 4,500.00 - NETFLIX.COM - Monthly subscription renewal", "expected": "subscription"}, {"text": "SPOTIFY 1500.00 NGN - Premium Individual - Recurring payment", "expected": "subscription"}, {"text": "AMAZON PRIME 2,300.00 - Video streaming monthly plan", "expected": "subscription"}, {"text": "DISNEY+ 3200 NGN billed on 15 Aug 2026", "expected": "subscription"}, {"text": "GOOGLE *YOUTUBE PREMIUM 1800.00 - Auto-renewal", "expected": "subscription"}, {"text": "SHOWMAX PRO 1200.00 NGN - Entertainment subscription", "expected": "subscription"}, {"text": "APPLE.COM/BILL 2900.00 - iCloud+ 200GB monthly", "expected": "subscription"}, {"text": "GOOGLE ONE 1300.00 - Storage plan renewal", "expected": "subscription"}, {"text": "MSFT *365 4500.00 - Microsoft 365 Personal subscription", "expected": "subscription"}, {"text": "NOTION 800.00 NGN - Plus plan monthly billing", "expected": "subscription"}, {"text": "CANVA 3500.00 - Pro plan auto-renewal", "expected": "subscription"}, {"text": "ADOBE 25000.00 NGN - Creative Cloud All Apps", "expected": "subscription"}, {"text": "GITHUB 3000.00 - Pro subscription monthly", "expected": "subscription"}, {"text": "CHATGPT 2000.00 - OpenAI Plus subscription", "expected": "subscription"}, {"text": "CLAUDE.AI 1800.00 - Anthropic Pro plan", "expected": "subscription"}, {"text": "PLANET FITNESS 1500.00 - Black Card membership", "expected": "subscription"}, {"text": "STRAVA 4000.00 NGN - Summit annual pack", "expected": "subscription"}, {"text": "MTN NIGERIA 3000.00 - 10GB monthly data plan", "expected": "subscription"}, {"text": "AIRTEL 2500.00 - SmartConnect Premium renewal", "expected": "subscription"}, {"text": "DSTV/MULTICHOICE 9000.00 - Compact package", "expected": "subscription"}, {"text": "GOTV 3300.00 NGN - Jolli package monthly", "expected": "subscription"}, {"text": "SPECTRANET 16000.00 - Unlimited Ultra broadband", "expected": "subscription"}, {"text": "SMILE COMMUNICATIONS 7500.00 - 50GB Anytime plan", "expected": "subscription"}, {"text": "IROKOTV 500.00 - VIP Nollywood subscription", "expected": "subscription"}, {"text": "JUMIA PRIME 1000.00 - Free delivery membership", "expected": "subscription"}, {"text": "CHOWDECK PLUS 1500.00 - Premium delivery plan", "expected": "subscription"}, {"text": "PIGGYVEST 500.00 - AutoSave weekly deduction", "expected": "subscription"}, {"text": "COWRYWISE 1000.00 - Stash plan monthly", "expected": "subscription"}, {"text": "RISEVEST 5000.00 NGN - Dollar investment plan", "expected": "subscription"}, {"text": "NYTIMES 1500.00 - Basic digital subscription", "expected": "subscription"}, {"text": "MEDIUM.COM 2500.00 - Membership renewal", "expected": "subscription"}, {"text": "DEEZER 1000.00 - HiFi FLAC streaming plan", "expected": "subscription"}, {"text": "DROPBOX 1200.00 - Plus 2TB storage plan", "expected": "subscription"}, {"text": "BOOMPLAY 300.00 - Premium offline mode", "expected": "subscription"}, {"text": "AUDIOMACK 250.00 NGN - Premium no-ads plan", "expected": "subscription"}],
+    fuzzy: [{"text": "NTFLIX 4500.00 - monthly charge", "expected": "subscription"}, {"text": "SPOTFY PREMIUM 1500.00 NGN", "expected": "subscription"}, {"text": "AMZN PRIME VIDEO 2300.00", "expected": "subscription"}, {"text": "DISNEY PLUS 3200.00 - streaming", "expected": "subscription"}, {"text": "YOUTUBE *PREMIUM 1800 billed", "expected": "subscription"}, {"text": "SHOW MAX 1200.00 NGN", "expected": "subscription"}, {"text": "APPLE BILL 2900.00 - cloud", "expected": "subscription"}, {"text": "GOOGL ONE 1300.00", "expected": "subscription"}, {"text": "MICROSOFT OFFICE 365 4500.00", "expected": "subscription"}, {"text": "NOTION.SO 800.00 - plus", "expected": "subscription"}, {"text": "CANVA.COM 3500.00", "expected": "subscription"}, {"text": "ADOBE CREATIVE 25000.00", "expected": "subscription"}, {"text": "GITHUB.COM 3000.00", "expected": "subscription"}, {"text": "CHAT GPT PLUS 2000.00", "expected": "subscription"}, {"text": "ANTHROPIC CLAUDE 1800.00", "expected": "subscription"}, {"text": "PLANET FITNES 1500.00", "expected": "subscription"}, {"text": "MTN NG 3000.00 - data bundle", "expected": "subscription"}, {"text": "ETISALAT 2500.00 NGN", "expected": "subscription"}, {"text": "MULTICHOICE DSTV 9000.00", "expected": "subscription"}, {"text": "SPECTRA NET 16000.00", "expected": "subscription"}, {"text": "SMILE 4G 7500.00", "expected": "subscription"}, {"text": "IROKO TV 500.00", "expected": "subscription"}, {"text": "CHOWDECK PREMIUM 1500.00", "expected": "subscription"}, {"text": "PIGGY VEST 500.00", "expected": "subscription"}, {"text": "RISE VEST 5000.00", "expected": "subscription"}, {"text": "NEW YORK TIMES 1500.00", "expected": "subscription"}, {"text": "MEDIUM MEMBERSHIP 2500.00", "expected": "subscription"}],
+    heuristic: [{"text": "UNKNOWN MERCHANT 5000.00 - Monthly premium plan renewal", "expected": "subscription"}, {"text": "XYZ SERVICES 12000.00 - Annual subscription payment", "expected": "subscription"}, {"text": "ABC CORP 3500.00 - Pro membership recurring", "expected": "subscription"}, {"text": "MYAPP 2000.00 NGN - Monthly plan auto-renew", "expected": "subscription"}, {"text": "SOMESERVICE 4500.00 - Premium membership fee", "expected": "subscription"}],
+    reject: [{"text": "UBER TRIP 3500.00 - Ride from Ikeja to Lekki", "expected": "none"}, {"text": "SHOPRITE LAGOS 12500.00 - Grocery shopping", "expected": "none"}, {"text": "TOTAL FUEL 15000.00 - Petrol purchase", "expected": "none"}, {"text": "TRANSFER TO TUNDE 50000.00 - Quick transfer", "expected": "none"}, {"text": "ATM WITHDRAWAL 20000.00 - Self service", "expected": "none"}]
+};
+
+let currentTab = 'exact';
+let passedCount = 0;
+let failedCount = 0;
+
+// Render demo plans
+function renderPlans(filter) {
+    const grid = document.getElementById('plans-grid');
+    const plans = filter === 'all' ? DEMO_PLANS : DEMO_PLANS.filter(p => p.category === filter);
+
+    grid.innerHTML = plans.map(plan => `
+        <div class="plan-card" onclick="fillPlayground('${plan.merchant}', ${plan.amount_kobo})">
+            <div class="plan-merchant">${plan.merchant}</div>
+            <div class="plan-meta">
+                <span class="badge badge-info">${plan.category}</span>
+                <span class="badge badge-neutral">${plan.interval}</span>
+            </div>
+            <div class="plan-amount">${plan.amount_display}<span style="font-size:0.8rem;color:var(--text-secondary);font-weight:400">/month</span></div>
+            <div class="plan-desc">${plan.description}</div>
+        </div>
+    `).join('');
+}
+
+function filterPlans(category) {
+    renderPlans(category);
+}
+
+function fillPlayground(merchant, amountKobo) {
+    const amountNaira = amountKobo / 100;
+    const texts = [
+        `DEBIT: NGN ${amountNaira.toLocaleString()}.00 - ${merchant.toUpperCase()} - Monthly subscription renewal`,
+        `${merchant.toUpperCase()} ${amountNaira.toLocaleString()}.00 NGN - Recurring payment`,
+        `${merchant} ${amountNaira.toLocaleString()}.00 - Auto-renewal`
+    ];
+    const randomText = texts[Math.floor(Math.random() * texts.length)];
+    document.getElementById('playground-text').value = randomText;
+    classifyPlayground();
+}
+
+// Render test cases
+function renderTestCases() {
+    const container = document.getElementById('test-suite-container');
+    const cases = TEST_CASES[currentTab];
+
+    container.innerHTML = cases.map((c, idx) => `
+        <div class="test-case" id="case-${currentTab}-${idx}">
+            <div class="test-case-header">
+                <div class="test-case-text">${escapeHtml(c.text)}</div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <span id="icon-${currentTab}-${idx}" class="status-icon status-pending">○</span>
+                    <button class="btn btn-sm btn-primary" onclick="runTest('${currentTab}', ${idx})" style="width: auto; white-space: nowrap;">
+                        Run
+                        <span id="spin-${currentTab}-${idx}" class="htmx-indicator spinner" style="width: 0.875rem; height: 0.875rem; border-width: 2px;"></span>
+                    </button>
+                </div>
+            </div>
+            <div id="result-${currentTab}-${idx}" class="test-case-result"></div>
+        </div>
+    `).join('');
+}
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.test-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    renderTestCases();
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+async function classifyPlayground() {
+    const text = document.getElementById('playground-text').value;
+    const spinner = document.getElementById('playground-spinner');
+    const resultDiv = document.getElementById('playground-result');
+
+    spinner.style.display = 'inline-block';
+
+    try {
+        const resp = await fetch('/classify-transaction', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({text})
+        });
+        const data = await resp.json();
+        resultDiv.innerHTML = renderResultCard(data);
+    } catch (e) {
+        // Fallback: try direct Python service
+        try {
+            const resp = await fetch('http://localhost:8001/classify-transaction', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({text})
+            });
+            const data = await resp.json();
+            resultDiv.innerHTML = renderResultCard(data);
+        } catch (e2) {
+            resultDiv.innerHTML = `<div class="alert alert-error">Service unavailable. Make sure Python AI is running on port 8001.</div>`;
+        }
+    }
+
+    spinner.style.display = 'none';
+}
+
+function renderResultCard(data) {
+    const confColor = data.confidence >= 0.8 ? '' : (data.confidence >= 0.5 ? 'medium' : 'low');
+    const isSub = data.is_subscription;
+
+    return `
+        <div style="animation: slideIn 0.3s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span class="badge ${isSub ? 'badge-success' : 'badge-danger'}">${isSub ? 'SUBSCRIPTION DETECTED' : 'NOT A SUBSCRIPTION'}</span>
+                <span class="badge badge-neutral">${data.match_type.toUpperCase()}</span>
+            </div>
+            ${data.merchant ? `
+            <div class="detail" style="border-bottom: 1px solid var(--border);">
+                <span>Merchant</span>
+                <span style="font-weight: 700;">${data.merchant}</span>
+            </div>
+            <div class="detail" style="border-bottom: 1px solid var(--border);">
+                <span>Category</span>
+                <span class="badge badge-info">${data.category}</span>
+            </div>
+            ` : ''}
+            <div class="detail" style="border-bottom: 1px solid var(--border);">
+                <span>Amount</span>
+                <span style="font-weight: 700;">₦${data.amount || 'N/A'}</span>
+            </div>
+            <div class="detail" style="display: block; border-bottom: none;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Confidence</span>
+                    <span style="font-weight: 700;">${(data.confidence * 100).toFixed(0)}%</span>
+                </div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill ${confColor}" style="width: ${data.confidence * 100}%"></div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+async function runTest(tab, idx) {
+    const testCase = TEST_CASES[tab][idx];
+    const icon = document.getElementById(`icon-${tab}-${idx}`);
+    const resultDiv = document.getElementById(`result-${tab}-${idx}`);
+    const spinner = document.getElementById(`spin-${tab}-${idx}`);
+
+    spinner.style.display = 'inline-block';
+    icon.textContent = '○';
+    icon.className = 'status-icon status-pending';
+
+    let data;
+    try {
+        const resp = await fetch('/classify-transaction', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({text: testCase.text})
+        });
+        data = await resp.json();
+    } catch (e) {
+        try {
+            const resp = await fetch('http://localhost:8001/classify-transaction', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({text: testCase.text})
+            });
+            data = await resp.json();
+        } catch (e2) {
+            data = {error: true};
+        }
+    }
+
+    spinner.style.display = 'none';
+
+    if (data.error) {
+        icon.textContent = '⚠';
+        icon.className = 'status-icon status-fail';
+        resultDiv.innerHTML = '<div class="alert alert-error" style="margin-top:0.5rem;">Service unreachable</div>';
+        resultDiv.classList.add('show');
+        failedCount++;
+        updateStats();
+        return;
+    }
+
+    // Determine pass/fail
+    let passed = false;
+    if (testCase.expected === 'subscription') {
+        passed = data.is_subscription === true;
+    } else {
+        passed = data.is_subscription === false;
+    }
+
+    if (passed) {
+        icon.textContent = '✓';
+        icon.className = 'status-icon status-pass';
+        passedCount++;
+    } else {
+        icon.textContent = '✗';
+        icon.className = 'status-icon status-fail';
+        failedCount++;
+    }
+
+    resultDiv.innerHTML = renderResultCard(data);
+    resultDiv.classList.add('show');
+    updateStats();
+}
+
+async function runAllTests() {
+    const spinner = document.getElementById('batch-spinner');
+    const log = document.getElementById('batch-log');
+    const batchResults = document.getElementById('batch-results');
+
+    spinner.style.display = 'inline-block';
+    batchResults.style.display = 'block';
+    log.innerHTML = '<div style="color:#6b7280;">Starting batch test run...</div>';
+
+    passedCount = 0;
+    failedCount = 0;
+    updateStats();
+
+    const allTabs = ['exact', 'fuzzy', 'heuristic', 'reject'];
+    let total = 0;
+
+    for (const tab of allTabs) {
+        if (currentTab !== tab) switchTab(tab);
+        const cases = TEST_CASES[tab];
+
+        for (let i = 0; i < cases.length; i++) {
+            total++;
+            log.innerHTML += `<div>[$${total}] Testing ${tab} case ${i+1}...</div>`;
+            log.scrollTop = log.scrollHeight;
+            await runTest(tab, i);
+            await new Promise(r => setTimeout(r, 150)); // Small delay to not overwhelm
+        }
+    }
+
+    spinner.style.display = 'none';
+    log.innerHTML += `<div style="color: var(--primary); font-weight: 700; margin-top: 0.5rem;">Done! ${passedCount} passed, ${failedCount} failed.</div>`;
+    log.scrollTop = log.scrollHeight;
+}
+
+function resetTests() {
+    passedCount = 0;
+    failedCount = 0;
+    updateStats();
+    renderTestCases();
+    document.getElementById('batch-results').style.display = 'none';
+    document.getElementById('batch-log').innerHTML = '';
+}
+
+function updateStats() {
+    document.getElementById('stat-passed').textContent = passedCount;
+    document.getElementById('stat-failed').textContent = failedCount;
+    const total = passedCount + failedCount;
+    const rate = total > 0 ? Math.round((passedCount / total) * 100) : 0;
+    document.getElementById('stat-rate').textContent = rate + '%';
+}
+
+// Initialize
+renderPlans('all');
+renderTestCases();
+</script>
+{{end}}

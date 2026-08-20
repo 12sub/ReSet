@@ -17,6 +17,10 @@ func NewTrackedHandler(svc *service.TrackedService) *TrackedHandler {
 	return &TrackedHandler{service: svc}
 }
 
+func (h *TrackedHandler) TestPage(w http.ResponseWriter, r *http.Request) {
+    templates.T.ExecuteTemplate(w, "layout", map[string]string{"Page": "test"})
+}
+
 func (h *TrackedHandler) DetectPage(w http.ResponseWriter, r *http.Request) {
     if err := templates.T.ExecuteTemplate(w, "layout", map[string]string{"Page": "detect"}); err != nil {
         log.Printf("template error: %v", err)

@@ -1,0 +1,57 @@
+services:
+  # 1. Python FastAPI Classification Service
+  - type: web
+    name: reset-python-classifier
+    runtime: python
+    region: oregon # Choose a region close to you
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port 8001
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+
+  # 2. Go Backend Service
+  - type: web
+    name: reset-go-backend
+    runtime: go
+    region: oregon # Must match the Python service region for internal networking
+    branch: main
+    buildCommand: go build -o main main.go
+    startCommand: ./main
+    envVars:
+      - key: GO_VERSION
+        value: 1.26.0
+      - key: PORT
+        value: 10000
+      # Internal Render URL to communicate with the Python service
+      - key: PYTHON_URL
+        value: http://reset-python-classifier:8001
+      # These will be automatically populated from the database/redis below
+      - key: DATABASE_URL
+        fromDatabase:
+          name: reset-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: reset-redis
+          property: connectionString
+      # You will set this manually in the Render Dashboard after creation
+      - key: 
+        sync: false 
+
+# 3. Managed PostgreSQL Database
+databases:
+  - name: reset-postgres
+    databaseName: reset
+    user: reset
+    region: oregon
+
+# 4. Managed Redis Cache
+# Note: Render's native Redis requires a paid plan. 
+# If you need a free tier, use Upstash (https://upstash.com) and paste the URL into the Dashboard manually.
+redis:
+  - name: reset-redis
+    region: oregon
+    maxmemoryPolicy: noeviction

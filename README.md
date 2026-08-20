@@ -38,7 +38,7 @@
 *   **Frontend:** HTMX
 *   **Backend:** GOlang for the Backend, Python for the AI/ML
 *   **Database:** PostgreSQL for Long Term Storage and Redis for in-memory caching 
-*   **Deployment:** Render 
+*   **Deployment:** Render for Code deployment, Heroku for Training AI Models
 *   **AI/APIs:** KIMI.AI for Research, Paystack API for subscription and cancellation,
 
 ---
