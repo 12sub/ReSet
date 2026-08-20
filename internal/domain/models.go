@@ -18,6 +18,7 @@ type Subscription struct {
 	CustomerEmail string             `json:"customer_email"`
 	PlanCode      string             `json:"plan_code"`      // Paystack plan code
 	PaystackSubID string             `json:"paystack_sub_id"` // Paystack subscription ID
+	PaystackEmailToken string             `json:"-"`               // Paystack email token
 	Status        SubscriptionStatus `json:"status"`
 	Amount        int                `json:"amount"`         // in kobo
 	CreatedAt     time.Time          `json:"created_at"`

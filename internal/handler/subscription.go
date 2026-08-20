@@ -3,9 +3,12 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
+
 	"github.com/google/uuid"
 	"github.com/12sub/Reset/internal/domain"
 	"github.com/12sub/Reset/internal/service"
+	"github.com/12sub/Reset/internal/templates"
 )
 
 type SubscriptionHandler struct {
@@ -17,67 +20,88 @@ func NewSubscriptionHandler(sub *service.SubscriptionService, cancel *service.Ca
 	return &SubscriptionHandler{subService: sub, cancelSvc: cancel}
 }
 
+func (h *SubscriptionHandler) Index(w http.ResponseWriter, r *http.Request) {
+	templates.T.ExecuteTemplate(w, "layout", nil)
+}
+
 func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var req struct {
-		Email         string `json:"email"`
-		PlanCode      string `json:"plan_code"`
-		Authorization string `json:"authorization"` // Paystack auth code from frontend
-		Amount        int    `json:"amount"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "bad request", 400)
+	if err := r.ParseForm(); err != nil {
+		renderError(w, "Invalid form data")
 		return
 	}
 
-	sub, err := h.subService.Create(r.Context(), req.Email, req.PlanCode, req.Authorization, req.Amount)
+	email := r.FormValue("email")
+	planCode := r.FormValue("plan_code")
+	reference := r.FormValue("reference")
+	amountStr := r.FormValue("amount")
+
+	amount, err := strconv.Atoi(amountStr)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		renderError(w, "Invalid amount")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(sub)
+	sub, err := h.subService.Create(r.Context(), email, planCode, reference, amount)
+	if err != nil {
+		renderError(w, err.Error())
+		return
+	}
+
+	data := map[string]interface{}{
+		"ID":            sub.ID.String(),
+		"CustomerEmail": sub.CustomerEmail,
+		"PlanCode":      sub.PlanCode,
+		"Amount":        sub.Amount / 100,
+		"CreatedAt":     sub.CreatedAt.Format("Jan 02, 2006 15:04"),
+	}
+
+	templates.T.ExecuteTemplate(w, "active", data)
 }
 
 func (h *SubscriptionHandler) Cancel(w http.ResponseWriter, r *http.Request) {
-	var req domain.CancelRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "bad request", 400)
+	if err := r.ParseForm(); err != nil {
+		renderError(w, "Invalid form data")
 		return
 	}
 
-	id, err := uuid.Parse(req.SubscriptionID)
+	subIDStr := r.FormValue("subscription_id")
+	if subIDStr == "" {
+		var req domain.CancelRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			renderError(w, "Invalid request")
+			return
+		}
+		subIDStr = req.SubscriptionID
+	}
+
+	id, err := uuid.Parse(subIDStr)
 	if err != nil {
-		http.Error(w, "invalid uuid", 400)
-		return
-	}
-
-	if err := h.cancelSvc.Cancel(r.Context(), id, req.Reason); err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-
-	w.WriteHeader(204)
-}
-
-func (h *SubscriptionHandler) Get(w http.ResponseWriter, r *http.Request) {
-	idStr := r.URL.Query().Get("id")
-	id, err := uuid.Parse(idStr)
-	if err != nil {
-		http.Error(w, "invalid uuid", 400)
+		renderError(w, "Invalid subscription ID")
 		return
 	}
 
 	sub, err := h.subService.Get(r.Context(), id)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-	if sub == nil {
-		http.Error(w, "not found", 404)
+	if err != nil || sub == nil {
+		renderError(w, "Subscription not found")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(sub)
+	if err := h.cancelSvc.Cancel(r.Context(), id, "User requested via ReSet"); err != nil {
+		renderError(w, err.Error())
+		return
+	}
+
+	data := map[string]interface{}{
+		"ID":            sub.ID.String(),
+		"CustomerEmail": sub.CustomerEmail,
+		"PlanCode":      sub.PlanCode,
+		"CanceledAt":    "Just now",
+	}
+
+	templates.T.ExecuteTemplate(w, "canceled", data)
+}
+
+func renderError(w http.ResponseWriter, msg string) {
+	w.WriteHeader(http.StatusOK)
+	templates.T.ExecuteTemplate(w, "error", map[string]string{"Message": msg})
 }

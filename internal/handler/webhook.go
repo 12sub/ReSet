@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"os"
 
 	"github.com/12sub/Reset/internal/domain"
 	"github.com/12sub/Reset/internal/repository"
@@ -18,13 +17,12 @@ type WebhookHandler struct {
 	secretKey  string
 }
 
-func NewWebhookHandler(repo *repository.SubscriptionRepo) *WebhookHandler {
+func NewWebhookHandler(repo *repository.SubscriptionRepo, secretKey string) *WebhookHandler {
 	return &WebhookHandler{
 		repo:      repo,
-		secretKey: os.Getenv("PAYSTACK_SECRET_KEY"),
+		secretKey: secretKey,
 	}
 }
-
 // verifySignature checks the x-paystack-signature header against HMAC-SHA512 of the body
 func (h *WebhookHandler) verifySignature(body []byte, signature string) bool {
 	if signature == "" || h.secretKey == "" {

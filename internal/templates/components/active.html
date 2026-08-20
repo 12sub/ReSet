@@ -1,0 +1,23 @@
+{{define "active"}}
+<div class="card" id="subscription-card">
+    <h2>Subscription Active</h2>
+    
+    <div class="detail"><strong>ID:</strong> {{.ID}}</div>
+    <div class="detail"><strong>Email:</strong> {{.CustomerEmail}}</div>
+    <div class="detail"><strong>Plan:</strong> {{.PlanCode}}</div>
+    <div class="detail"><strong>Amount:</strong> ₦{{.Amount}}</div>
+    <div class="detail"><strong>Status:</strong> <span style="color: #10b981; font-weight: 600;">Active</span></div>
+    <div class="detail"><strong>Created:</strong> {{.CreatedAt}}</div>
+
+    <button class="btn btn-danger" 
+            hx-post="/subscriptions/cancel" 
+            hx-vals='{"subscription_id": "{{.ID}}", "reason": "User requested via ReSet"}'
+            hx-target="#subscription-card"
+            hx-swap="outerHTML"
+            hx-confirm="Are you sure you want to cancel this subscription?"
+            hx-indicator=".spinner">
+        Cancel Subscription
+        <span class="htmx-indicator spinner"></span>
+    </button>
+</div>
+{{end}}

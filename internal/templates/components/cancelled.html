@@ -1,0 +1,19 @@
+{{define "canceled"}}
+<div class="card" id="subscription-card">
+    <h2>Subscription Cancelled</h2>
+    
+    <div class="detail"><strong>ID:</strong> {{.ID}}</div>
+    <div class="detail"><strong>Email:</strong> {{.CustomerEmail}}</div>
+    <div class="detail"><strong>Plan:</strong> {{.PlanCode}}</div>
+    <div class="detail"><strong>Status:</strong> <span style="color: #ef4444; font-weight: 600;">Canceled</span></div>
+    <div class="detail"><strong>Cancelled At:</strong> {{.CanceledAt}}</div>
+
+    <div class="alert alert-success" style="margin-top: 1rem;">
+        Your subscription has been successfully cancelled. No further charges will be made.
+    </div>
+
+    <a href="/" class="btn btn-primary" style="display: block; text-align: center; text-decoration: none; margin-top: 1rem;">
+        Start New Subscription
+    </a>
+</div>
+{{end}}

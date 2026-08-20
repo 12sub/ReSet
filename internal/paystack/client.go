@@ -2,23 +2,28 @@ package paystack
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/12sub/Reset/internal/cache"
 )
 
 type Client struct {
 	secretKey string
 	baseURL   string
 	client    *http.Client
+	cache     *cache.RedisCache
 }
 
-func New(secretKey string) *Client {
+func New(secretKey string, c *cache.RedisCache) *Client {
 	return &Client{
 		secretKey: secretKey,
-		baseURL:   "https://api.paystack.com",
+		baseURL:   "https://api.paystack.co",
 		client:    &http.Client{Timeout: 10 * time.Second},
+		cache:     c,
 	}
 }
 
@@ -53,11 +58,22 @@ func (c *Client) do(method, path string, body, result interface{}) error {
 	return nil
 }
 
-func (c *Client) VerifyTransaction(reference string) (*VerifyResponse, error) {
+func (c *Client) VerifyTransaction(ctx context.Context, reference string) (*VerifyResponse, error) {
+	cacheKey := "tx:" + reference
+	var cached VerifyResponse
+
+	found, err := c.cache.Get(ctx, cacheKey, &cached)
+	if err != nil {
+		// Log cache error but continue to API
+	}
+	if found {
+		return &cached, nil
+	}
+
 	var resp struct {
-		Status  bool            `json:"status"`
-		Message string          `json:"message"`
-		Data    VerifyResponse  `json:"data"`
+		Status  bool           `json:"status"`
+		Message string         `json:"message"`
+		Data    VerifyResponse `json:"data"`
 	}
 	if err := c.do("GET", "/transaction/verify/"+reference, nil, &resp); err != nil {
 		return nil, err
@@ -65,6 +81,9 @@ func (c *Client) VerifyTransaction(reference string) (*VerifyResponse, error) {
 	if !resp.Status {
 		return nil, fmt.Errorf("paystack: %s", resp.Message)
 	}
+
+	// Cache transaction for 30 minutes (immutable data)
+	c.cache.Set(ctx, cacheKey, &resp.Data, 30*time.Minute)
 	return &resp.Data, nil
 }
 
@@ -112,16 +131,13 @@ type VerifyResponse struct {
 	Amount        int    `json:"amount"`
 	Authorization struct {
 		AuthorizationCode string `json:"authorization_code"`
-		Bin               string `json:"bin"`
-		Last4             string `json:"last4"`
-		Channel           string `json:"channel"`
-		CardType          string `json:"card_type"`
-		Bank              string `json:"bank"`
-		CountryCode       string `json:"country_code"`
 	} `json:"authorization"`
 	Customer struct {
 		Email string `json:"email"`
 	} `json:"customer"`
+	Plan struct {
+		PlanCode string `json:"plan_code"`
+	} `json:"plan"`
 }
 
 type SubscriptionResponse struct {
