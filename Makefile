@@ -1,16 +1,16 @@
 .PHONY: build run dev stop logs
 
 build:
-	docker-compose build
+	docker compose build
 
 run:
-	docker-compose up -d
+	docker compose up -d
 
 dev:
-	docker-compose up
+	docker compose up
 
 stop:
-	docker-compose down
+	docker compose down
 
 logs:
 	docker-compose logs -f api

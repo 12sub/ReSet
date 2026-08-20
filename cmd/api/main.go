@@ -53,5 +53,5 @@ func main() {
 	mux.HandleFunc("POST /webhooks/paystack", wh.Handle)
 	mux.HandleFunc("GET /health", healthHandler.Handle)
 	log.Printf("ReSet server running on http://localhost:%s", cfg.Port)
-	log.Fatal(http.ListenAndServe(":"+cfg.Port, mux))
+	log.Fatal(http.ListenAndServe("0.0.0.0"+cfg.Port, mux))
 }

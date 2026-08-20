@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 RUN apk add --no-cache git
@@ -8,7 +8,6 @@ RUN go mod download
 
 COPY . .
 
-# Build with embedded templates
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /app/reset ./cmd/api
 
 FROM alpine:latest
