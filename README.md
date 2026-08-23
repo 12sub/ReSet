@@ -10,7 +10,7 @@
 
 ## 🚀 Live Demo
 
-*   **Live Application:** [Link to your deployed Vercel/Netlify/Render URL]
+*   **Live Application:** https://reset-lugo.onrender.com/
 *   **Backend API:** [Link to your live backend API endpoint URL, if separate]
 *   **Recorded Demo:** [Link to your recorded demo explaining how your solution works using Loom].
 
@@ -21,7 +21,7 @@
 
 *Many people in their day to day lives are met with unexpected bills that are gotten from subscription services that they have registered for but they have not or cannot unsubscribe from. These adds up costs that goes deep into their wallets and makes them at the mercy of predatory corporations*
 
-> **Example:** How might we help busy people organize their daily tasks more effectively?
+> How might we help people save unnecessary subscription costs more effectively?
 
 ## ✨ Our Solution
 
@@ -50,22 +50,28 @@
 
 1.  Clone the repository:
     ```bash
-    git clone [your-repo-link]
+    git clone https://github.com/12sub/ReSet/tree/confluence1
     ```
 2.  Navigate to the project directory:
     ```bash
-    cd [project-directory]
+    cd /cmd/api
     ```
 3.  Install dependencies:
     ```bash
-    npm install
+    sudo apt install golang-go
+    pip install -r requirements.txt
+    go mod tidy
     ```
 4.  Create a `.env.local` file and add the necessary environment variables:
     ```
     DATABASE_URL=...
     API_KEY=...
     ```
-5.  Run the development server:
-    ```bash
-    npm run dev
+5.  To test for the subscription plans, you can either use flutterwave, or paystack:
     ```
+    Go to paystack dashboard
+    Register/Signup for paystack
+    Go to Settings -> API Keys & Webhooks -> Create New API Key
+    Go to Recurring -> Plans -> New Plans to create a New Plan
+    ```
+    *You can use this to test how the subscription cancellation software would work*

@@ -36,6 +36,7 @@ type ClassifyResponse struct {
 }
 
 func (c *Client) Classify(ctx context.Context, text string) (*ClassifyResponse, error) {
+	fmt.Printf("DEBUG: Calling Python at %s/classify-transaction\n", c.baseURL)
 	body, _ := json.Marshal(ClassifyRequest{Text: text})
 	req, err := http.NewRequestWithContext(ctx, "POST", c.baseURL+"/classify-transaction", bytes.NewReader(body))
 	if err != nil {
