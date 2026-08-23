@@ -44,9 +44,8 @@
 
 ## ⚙️ How to Set Up and Run Locally (Optional)
 
-*Briefly explain the steps to get your project running on a local machine.*
+*Here are the steps to running the project running on a local machine.*
 
-**Example:**
 
 1.  Clone the repository:
     ```bash
@@ -75,3 +74,12 @@
     Go to Recurring -> Plans -> New Plans to create a New Plan
     ```
     *You can use this to test how the subscription cancellation software would work*
+
+## ⚙️ Future Plans
+
+*After this hackathon, we plan to improve on this project by*
+
+1. Setting up Bank statement ingestation and Email receipt scanning functionality
+2. Implement a smart cancellation engine
+3. Setup renewal date tracking functionality
+4. Setup a better AI Classification model
