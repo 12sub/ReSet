@@ -30,6 +30,11 @@ func main() {
 		log.Fatal("cannot ping db:", err)
 	}
 
+	// RUN MIGRATIONS AUTOMATICALLY
+	if err := repository.RunMigrations(db, "./migrations"); err != nil {
+		log.Fatal("migrations failed:", err)
+	}
+
 	redisCache := cache.NewRedis(cfg.RedisAddr)
 	ctx := context.Background()
 	if err := redisCache.Ping(ctx); err != nil {
